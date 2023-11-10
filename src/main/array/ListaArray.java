@@ -12,8 +12,8 @@ public class ListaArray implements EstruturaElementar{
 
     @Override
     public boolean buscaElemento(int valor) { // Completo, testado.
-            for (int i = 0; i < indiceAposFim; i++) {
-                if (array[i] == valor) {
+            for (int i = 0; i < indiceAposFim -1; i++) {
+                if (this.array[i] == valor) {
                     return true;
                 }
             }
@@ -22,17 +22,17 @@ public class ListaArray implements EstruturaElementar{
 
     @Override
     public int buscaIndice(int valor) {
-        if (valor < array.length) { // Verifica se o índice é menor ou igual ao tamanho do array.
+        if (valor <= indiceAposFim-1) { // Verifica se o índice é menor ou igual ao tamanho do array.
             return array[valor];
         }
-        return -0; // Retorna -1 se o elemento não estiver no array.
+        return 0; // Retorna -1 se o elemento não estiver no array.
     }
 
     @Override
     public int minimo() { // Completo, testado, corrigido.
         int minimo = array[0];
         if (indiceAposFim != 1) { // Verifica se ao menos um elemento já foi adicionado.
-            for (int i = 0; i < indiceAposFim; i++) {
+            for (int i = 0; i < indiceAposFim -1; i++) {
                 if (array[i] < minimo) {
                     minimo = array[i];
                 }
@@ -45,7 +45,7 @@ public class ListaArray implements EstruturaElementar{
     public int maximo() { // Completo, testado, corrigido.
         int maximo = array[0];
         if (indiceAposFim > 1) { // Verifica se ao menos um elemento já foi adicionado.
-            for (int i = 0; i < indiceAposFim; i++) {
+            for (int i = 0; i < indiceAposFim-1; i++) {
                 if (array[i] > maximo) {
                     maximo = array[i];
                 }
@@ -55,26 +55,28 @@ public class ListaArray implements EstruturaElementar{
     }
 
     @Override
-    public int predecessor(int valor) {
-        if (indiceAposFim > 2) {
-            int indice = buscaIndice(valor);
-            if (indice < array.length - 1) {
-
+    public int predecessor(int valor) { // A entrada "valor" é o índice.
+        if (indiceAposFim > 2) { // Verifica se ao menos dois elementos foram adicionados.
+            return this.array[valor-1];
             }
-
+            return -1;
         }
-        return 0;
-    }
+
 
     @Override
     public int sucessor(int valor) {
-        return 0;
+        if (indiceAposFim > 2 && valor <= indiceAposFim-2) { // A entrada "valor" é o índice.
+            // Verifica se ao menos dois elementos foram adicionados
+            // e se a entrada "valor" é menor ou igual ao tamanho do array.
+            return this.array[valor+1];
+            }
+            return -1;
     }
 
     @Override
-    public void insereElemento(int valor) { // Completo, testado, corrigido.
+    public void insereElemento(int valor) { // Está inserindo no começo.
         int[] arrayCopia = new int[this.array.length+1];
-            for (int i = 0; i < indiceAposFim - 1; i++) { // Está inserindo no começo.
+            for (int i = 0; i < indiceAposFim - 1; i++) { 
                 arrayCopia[i+1] = this.array[i];
             }
             arrayCopia[0] = valor;
@@ -83,14 +85,14 @@ public class ListaArray implements EstruturaElementar{
         }
 
     @Override
-    public void insereElementoPosicao(int valor, int buscaIndice) { // Completo, testado, corrigido.
+    public void insereElementoPosicao(int valor, int buscaIndice) { 
             int[] arrayCopia = new int[this.array.length+1];
             for (int i = 0; i < buscaIndice; i++) {
                 arrayCopia[i] = array[i];
             }
             arrayCopia[buscaIndice] = valor;
-            for (int i = buscaIndice + 1; i <= indiceAposFim; i++) {
-                arrayCopia[i] = array[i-1];
+            for (int i = buscaIndice + 1; i <= indiceAposFim-1; i++) {
+                arrayCopia[i] = this.array[i-1];
             }
             indiceAposFim++;
             this.array = arrayCopia;
@@ -98,10 +100,10 @@ public class ListaArray implements EstruturaElementar{
 
 
     @Override
-    public void insereInicio(int valor) { // Completo, testado, corrigido.
+    public void insereInicio(int valor) { 
         if (indiceAposFim != 1) {
         int[] arrayCopia = new int[this.array.length+1];
-        for (int i = indiceAposFim - 1; i >= 0; i--) {
+        for (int i = 0; i < indiceAposFim-1; i++) {
             arrayCopia[i + 1] = this.array[i];
         }
         arrayCopia[0] = valor;
@@ -109,11 +111,12 @@ public class ListaArray implements EstruturaElementar{
         this.array = arrayCopia;
     } else {
         this.array[0] = valor;
+        indiceAposFim++;
     }
 }
 
     @Override
-    public void insereFim(int valor) { // Completo, testado, corrigido.
+    public void insereFim(int valor) { 
         int[] arrayCopia = new int[this.array.length+1];
         for (int i = 0; i < array.length; i++) {
             arrayCopia[i] = this.array[i];
@@ -125,18 +128,22 @@ public class ListaArray implements EstruturaElementar{
     }
 
     @Override
-    public void removeIndice(int indice) { // Completo, testado.
+    public void removeIndice(int indice) {
         if (indice <= (indiceAposFim - 1)) {
-            int[] arrayCopia = new int[this.array.length+1];
-            for (int i = indice; i < indiceAposFim - 1; i++) {
-                array[i] = array[i + 1];
+            int[] arrayCopia = new int[this.array.length-1];
+            for (int i = 0; i < indice; i++) {
+                arrayCopia[i] = array[i];
             }
+            for (int i = indice+1; i < indiceAposFim-2; i++) {
+                arrayCopia[i-1] = this.array[i];
+            }
+            this.array=arrayCopia;
             indiceAposFim -= 1;
-            array[indiceAposFim] = 0;
         }
     }
 
-    public void remove(int valor) { //Completo, testado, corrigido.
+    public void remove(int valor) { 
+        // Remove o valor de entrada se e somente se o valor estiver presente no array.
         if (buscaElemento(valor)) { // Verifica se o valor existe no array.
             int[] arrayCopia = new int[this.array.length-1];
             int indiceElemRemovido = 0;
@@ -157,23 +164,21 @@ public class ListaArray implements EstruturaElementar{
 }
 
     @Override
-    public void removeInicio() { // Completo, testado, corrigido.
-        if (indiceAposFim != 1) {
+    public void removeInicio() { 
             int[] arrayCopia = new int[this.array.length-1];
-            for (int i = 1; i < indiceAposFim; i++) {
+            for (int i = 1; i < indiceAposFim-1; i++) {
                 arrayCopia[i-1] = this.array[i];
             }
             this.array = arrayCopia;
             indiceAposFim -= 1;
 
-        }
     }
 
     @Override
-    public void removeFim() { // Completo, testado.
+    public void removeFim() {
         if (indiceAposFim != 1) { // Verifica se ao menos um elemento já foi adicionado.
             int[] arrayCopia = new int[this.array.length-1];
-            for (int i = 1; i < indiceAposFim-1; i++) {
+            for (int i = 0; i < indiceAposFim-2; i++) {
                 arrayCopia[i] = this.array[i];
             }
             this.array = arrayCopia;
